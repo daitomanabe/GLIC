@@ -1,18 +1,999 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GLIC</title>
+    <title>GLIC - GLitch Image Codec</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #050508;
+            --bg-dark: #0a0a0f;
+            --bg-card: #0f0f18;
+            --bg-elevated: #14141f;
+            --cyan: #00ffff;
+            --magenta: #ff00ff;
+            --green: #00ff88;
+            --yellow: #ffff00;
+            --red: #ff3366;
+            --text-primary: #e8e8f0;
+            --text-muted: #8888aa;
+            --text-dim: #555566;
+            --border: #2a2a3a;
+            --glow-cyan: 0 0 30px rgba(0, 255, 255, 0.3);
+            --glow-magenta: 0 0 30px rgba(255, 0, 255, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Scanline overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 0, 0, 0.15) 2px,
+                rgba(0, 0, 0, 0.15) 4px
+            );
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* Noise texture overlay */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 9998;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(5, 5, 8, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 0;
+        }
+
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 1.5rem;
+            color: var(--cyan);
+            text-decoration: none;
+            text-shadow:
+                2px 0 var(--magenta),
+                -2px 0 var(--cyan);
+            animation: logoGlitch 3s infinite;
+        }
+
+        @keyframes logoGlitch {
+            0%, 90%, 100% { text-shadow: 2px 0 var(--magenta), -2px 0 var(--cyan); }
+            92% { text-shadow: -3px 0 var(--magenta), 3px 0 var(--cyan); }
+            94% { text-shadow: 2px 2px var(--magenta), -2px -2px var(--cyan); }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: color 0.3s, text-shadow 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--cyan);
+            text-shadow: 0 0 10px var(--cyan);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 6rem 2rem;
+            background:
+                radial-gradient(ellipse at 20% 80%, rgba(255, 0, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+                var(--bg-deep);
+        }
+
+        .hero-content {
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            border: 1px solid var(--border);
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            background: var(--bg-card);
+        }
+
+        .hero-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(3rem, 12vw, 10rem);
+            font-weight: 900;
+            line-height: 0.9;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .hero-title .glitch-text {
+            position: relative;
+            display: inline-block;
+            color: var(--text-primary);
+        }
+
+        .hero-title .glitch-text::before,
+        .hero-title .glitch-text::after {
+            content: 'GLIC';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .hero-title .glitch-text::before {
+            color: var(--cyan);
+            animation: glitch1 2s infinite linear alternate-reverse;
+            clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+        }
+
+        .hero-title .glitch-text::after {
+            color: var(--magenta);
+            animation: glitch2 3s infinite linear alternate-reverse;
+            clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+        }
+
+        @keyframes glitch1 {
+            0%, 80%, 100% { transform: translate(0); }
+            85% { transform: translate(-5px, 2px); }
+            90% { transform: translate(5px, -2px); }
+            95% { transform: translate(-3px, 0); }
+        }
+
+        @keyframes glitch2 {
+            0%, 70%, 100% { transform: translate(0); }
+            75% { transform: translate(5px, -2px); }
+            85% { transform: translate(-5px, 2px); }
+            95% { transform: translate(3px, 1px); }
+        }
+
+        .hero-subtitle {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(0.8rem, 2vw, 1.2rem);
+            font-weight: 400;
+            color: var(--text-muted);
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            margin-bottom: 3rem;
+        }
+
+        .hero-tagline {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 3rem;
+            line-height: 1.8;
+        }
+
+        .hero-tagline em {
+            color: var(--cyan);
+            font-style: normal;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border: 1px solid;
+            transition: all 0.3s;
+            cursor: pointer;
+            background: transparent;
+        }
+
+        .btn-primary {
+            color: var(--bg-deep);
+            background: var(--cyan);
+            border-color: var(--cyan);
+        }
+
+        .btn-primary:hover {
+            background: transparent;
+            color: var(--cyan);
+            box-shadow: var(--glow-cyan);
+        }
+
+        .btn-secondary {
+            color: var(--text-primary);
+            border-color: var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--magenta);
+            color: var(--magenta);
+            box-shadow: var(--glow-magenta);
+        }
+
+        /* Sections */
+        section {
+            padding: 8rem 0;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            color: var(--cyan);
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .section-desc {
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* About Section */
+        .about {
+            background: var(--bg-dark);
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .about-card {
+            padding: 2.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyan), var(--magenta));
+        }
+
+        .about-card h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .about-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Features Section */
+        .features {
+            background: var(--bg-deep);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .feature-card {
+            padding: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            transition: all 0.4s;
+            position: relative;
+        }
+
+        .feature-card:hover {
+            border-color: var(--cyan);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0, 255, 255, 0.1);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .feature-icon::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 2px solid;
+            transform: rotate(45deg);
+        }
+
+        .feature-card:nth-child(1) .feature-icon { color: var(--cyan); }
+        .feature-card:nth-child(1) .feature-icon::before { border-color: var(--cyan); }
+        .feature-card:nth-child(2) .feature-icon { color: var(--magenta); }
+        .feature-card:nth-child(2) .feature-icon::before { border-color: var(--magenta); }
+        .feature-card:nth-child(3) .feature-icon { color: var(--green); }
+        .feature-card:nth-child(3) .feature-icon::before { border-color: var(--green); }
+        .feature-card:nth-child(4) .feature-icon { color: var(--yellow); }
+        .feature-card:nth-child(4) .feature-icon::before { border-color: var(--yellow); }
+        .feature-card:nth-child(5) .feature-icon { color: var(--red); }
+        .feature-card:nth-child(5) .feature-icon::before { border-color: var(--red); }
+
+        .feature-card h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-card .count {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--cyan);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tag {
+            padding: 0.25rem 0.75rem;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Implementations Section */
+        .implementations {
+            background: var(--bg-dark);
+        }
+
+        .impl-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+        }
+
+        .impl-card {
+            padding: 3rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            position: relative;
+        }
+
+        .impl-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 200px;
+            background: linear-gradient(to top, var(--bg-card), transparent);
+            pointer-events: none;
+        }
+
+        .impl-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: 1.5rem;
+        }
+
+        .impl-card:first-child .impl-badge {
+            background: rgba(0, 255, 255, 0.1);
+            color: var(--cyan);
+            border: 1px solid var(--cyan);
+        }
+
+        .impl-card:last-child .impl-badge {
+            background: rgba(255, 0, 255, 0.1);
+            color: var(--magenta);
+            border: 1px solid var(--magenta);
+        }
+
+        .impl-card h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .impl-card > p {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .impl-features {
+            list-style: none;
+            position: relative;
+            z-index: 1;
+        }
+
+        .impl-features li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .impl-features li::before {
+            content: '>';
+            color: var(--cyan);
+            font-weight: bold;
+        }
+
+        /* Usage Section */
+        .usage {
+            background: var(--bg-deep);
+        }
+
+        .code-blocks {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .code-block {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .code-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.5rem;
+            background: var(--bg-elevated);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .code-title {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .code-dots {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .code-dots span {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .code-dots span:nth-child(1) { background: #ff5f56; }
+        .code-dots span:nth-child(2) { background: #ffbd2e; }
+        .code-dots span:nth-child(3) { background: #27ca40; }
+
+        .code-content {
+            padding: 1.5rem;
+            overflow-x: auto;
+        }
+
+        .code-content pre {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.8;
+        }
+
+        .code-content .comment { color: var(--text-dim); }
+        .code-content .command { color: var(--cyan); }
+        .code-content .flag { color: var(--magenta); }
+        .code-content .value { color: var(--green); }
+        .code-content .file { color: var(--yellow); }
+
+        /* Footer */
+        footer {
+            padding: 4rem 0;
+            background: var(--bg-dark);
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .footer-logo {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--cyan);
+        }
+
+        .footer-copy {
+            width: 100%;
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-dim);
+            font-size: 0.8rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .features-grid,
+            .impl-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .impl-grid > * {
+                min-width: 0;
+            }
+
+            .hero-cta {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+        /* Glitch animation for decorative elements */
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+            52% { opacity: 1; }
+            54% { opacity: 0.9; }
+        }
+
+        .hero-decoration {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border: 1px solid var(--border);
+            opacity: 0.3;
+            animation: flicker 4s infinite;
+        }
+
+        .hero-decoration:nth-child(1) {
+            top: 20%;
+            left: 10%;
+            transform: rotate(45deg);
+        }
+
+        .hero-decoration:nth-child(2) {
+            bottom: 20%;
+            right: 10%;
+            transform: rotate(-15deg);
+            border-color: var(--magenta);
+        }
+    </style>
 </head>
-
 <body>
-    <h1>GLIC Project</h1>
-    <ul>
-        <li><a href="GLIC.pdf">Project PDF</a></li>
-        <li><a href="README.md">README</a></li>
-    </ul>
-</body>
+    <nav>
+        <div class="container">
+            <a href="#" class="nav-logo">GLIC</a>
+            <ul class="nav-links">
+                <li><a href="#about">About</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#implementations">Implementations</a></li>
+                <li><a href="#usage">Usage</a></li>
+                <li><a href="https://github.com/daitomanabe/GLIC" target="_blank">GitHub</a></li>
+            </ul>
+        </div>
+    </nav>
 
+    <section class="hero">
+        <div class="hero-decoration"></div>
+        <div class="hero-decoration"></div>
+        <div class="hero-content">
+            <span class="hero-badge">Image Codec for Artists</span>
+            <h1 class="hero-title">
+                <span class="glitch-text">GLIC</span>
+            </h1>
+            <p class="hero-subtitle">GLitch Image Codec</p>
+            <p class="hero-tagline">
+                Transform your images into <em>intentional glitch art</em>.
+                A creative codec that turns compression artifacts into
+                <em>aesthetic expressions</em>.
+            </p>
+            <div class="hero-cta">
+                <a href="https://github.com/daitomanabe/GLIC" class="btn btn-primary" target="_blank">
+                    View on GitHub
+                </a>
+                <a href="#usage" class="btn btn-secondary">
+                    Get Started
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="about" id="about">
+        <div class="container">
+            <header class="section-header">
+                <span class="section-label">// About</span>
+                <h2 class="section-title">What is GLIC?</h2>
+                <p class="section-desc">
+                    An experimental image codec designed to create controlled glitch effects
+                    through intentional manipulation of compression algorithms.
+                </p>
+            </header>
+            <div class="about-grid">
+                <div class="about-card">
+                    <h3>Artistic Compression</h3>
+                    <p>GLIC reinterprets traditional image compression techniques as creative tools.
+                    By exposing and manipulating prediction errors, quantization, and wavelet transforms,
+                    it generates unique visual artifacts.</p>
+                </div>
+                <div class="about-card">
+                    <h3>Controlled Chaos</h3>
+                    <p>Unlike random data corruption, GLIC provides precise control over glitch parameters.
+                    Adjust prediction methods, color spaces, and encoding techniques to achieve
+                    consistent, reproducible results.</p>
+                </div>
+                <div class="about-card">
+                    <h3>Multiple Implementations</h3>
+                    <p>Available as both a Processing-based GUI application for interactive exploration
+                    and a C++ command-line tool for batch processing and integration into automated workflows.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features" id="features">
+        <div class="container">
+            <header class="section-header">
+                <span class="section-label">// Features</span>
+                <h2 class="section-title">Capabilities</h2>
+                <p class="section-desc">
+                    A comprehensive toolkit for creating diverse glitch aesthetics
+                </p>
+            </header>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">P</div>
+                    <span class="count">24</span>
+                    <h3>Prediction Methods</h3>
+                    <p>Algorithms that predict pixel values, creating unique artifacts from prediction errors</p>
+                    <div class="feature-tags">
+                        <span class="tag">Spiral</span>
+                        <span class="tag">Noise</span>
+                        <span class="tag">Gradient</span>
+                        <span class="tag">Wave</span>
+                        <span class="tag">Radial</span>
+                        <span class="tag">Edge</span>
+                        <span class="tag">Paeth</span>
+                        <span class="tag">Mirror</span>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">E</div>
+                    <span class="count">6</span>
+                    <h3>Encoding Methods</h3>
+                    <p>Data compression techniques that each produce distinct visual characteristics</p>
+                    <div class="feature-tags">
+                        <span class="tag">Raw</span>
+                        <span class="tag">Packed</span>
+                        <span class="tag">RLE</span>
+                        <span class="tag">Delta</span>
+                        <span class="tag">XOR</span>
+                        <span class="tag">Zigzag</span>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">C</div>
+                    <span class="count">16</span>
+                    <h3>Color Spaces</h3>
+                    <p>Transform images through different color representations for varied effects</p>
+                    <div class="feature-tags">
+                        <span class="tag">RGB</span>
+                        <span class="tag">HSB</span>
+                        <span class="tag">HWB</span>
+                        <span class="tag">LAB</span>
+                        <span class="tag">YUV</span>
+                        <span class="tag">XYZ</span>
+                        <span class="tag">YCbCr</span>
+                        <span class="tag">HCL</span>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">F</div>
+                    <span class="count">6</span>
+                    <h3>Post Effects</h3>
+                    <p>Additional processing applied after decoding for enhanced glitch aesthetics</p>
+                    <div class="feature-tags">
+                        <span class="tag">Pixelate</span>
+                        <span class="tag">Scanline</span>
+                        <span class="tag">Chromatic</span>
+                        <span class="tag">Dither</span>
+                        <span class="tag">Posterize</span>
+                        <span class="tag">Glitch</span>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">W</div>
+                    <span class="count">25+</span>
+                    <h3>Wavelet Transforms</h3>
+                    <p>Frequency-domain processing using various wavelet families</p>
+                    <div class="feature-tags">
+                        <span class="tag">Haar</span>
+                        <span class="tag">Daubechies</span>
+                        <span class="tag">Symlet</span>
+                        <span class="tag">Coiflet</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="implementations" id="implementations">
+        <div class="container">
+            <header class="section-header">
+                <span class="section-label">// Implementations</span>
+                <h2 class="section-title">Choose Your Tool</h2>
+                <p class="section-desc">
+                    Two ways to create glitch art, each suited for different workflows
+                </p>
+            </header>
+            <div class="impl-grid">
+                <div class="impl-card">
+                    <span class="impl-badge">Original</span>
+                    <h3>Processing (GUI)</h3>
+                    <p>Interactive visual interface for real-time experimentation and preset management</p>
+                    <ul class="impl-features">
+                        <li>Real-time parameter adjustment</li>
+                        <li>Visual preset browser</li>
+                        <li>Immediate preview</li>
+                        <li>Save/load configurations</li>
+                        <li>120+ included presets</li>
+                    </ul>
+                </div>
+                <div class="impl-card">
+                    <span class="impl-badge">C++ Port</span>
+                    <h3>Command Line (CLI)</h3>
+                    <p>High-performance command-line tool with extended features for automation</p>
+                    <ul class="impl-features">
+                        <li>Batch processing support</li>
+                        <li>8 additional prediction methods</li>
+                        <li>3 additional encoding methods</li>
+                        <li>6 post-processing effects</li>
+                        <li>Cross-platform (macOS, Linux, Windows)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="usage" id="usage">
+        <div class="container">
+            <header class="section-header">
+                <span class="section-label">// Usage</span>
+                <h2 class="section-title">Quick Start</h2>
+                <p class="section-desc">
+                    Get started with the C++ command-line interface
+                </p>
+            </header>
+            <div class="code-blocks">
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-title">Build from source</span>
+                        <div class="code-dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                    </div>
+                    <div class="code-content">
+<pre><span class="comment"># Clone and build</span>
+<span class="command">cd</span> <span class="file">implementation/glic_cpp</span>
+<span class="command">mkdir</span> build && <span class="command">cd</span> build
+<span class="command">cmake</span> ..
+<span class="command">cmake</span> <span class="flag">--build</span> .</pre>
+                    </div>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-title">Basic encode/decode</span>
+                        <div class="code-dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                    </div>
+                    <div class="code-content">
+<pre><span class="comment"># Encode image to GLIC format</span>
+<span class="command">./glic</span> encode <span class="file">photo.png</span> <span class="file">glitched.glic</span>
+
+<span class="comment"># Decode back to image</span>
+<span class="command">./glic</span> decode <span class="file">glitched.glic</span> <span class="file">result.png</span></pre>
+                    </div>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-title">Creative examples</span>
+                        <div class="code-dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                    </div>
+                    <div class="code-content">
+<pre><span class="comment"># Spiral prediction with high quantization</span>
+<span class="command">./glic</span> encode <span class="file">photo.png</span> <span class="file">out.glic</span> <span class="flag">--prediction</span> <span class="value">SPIRAL</span> <span class="flag">--quantization</span> <span class="value">180</span>
+
+<span class="comment"># Wave effect in YUV color space</span>
+<span class="command">./glic</span> encode <span class="file">photo.png</span> <span class="file">out.glic</span> <span class="flag">--colorspace</span> <span class="value">YUV</span> <span class="flag">--prediction</span> <span class="value">WAVE</span>
+
+<span class="comment"># Apply post-effects on decode</span>
+<span class="command">./glic</span> decode <span class="file">out.glic</span> <span class="file">result.png</span> <span class="flag">--effect</span> <span class="value">scanline</span> <span class="flag">--effect</span> <span class="value">chromatic</span>
+
+<span class="comment"># Combine multiple effects</span>
+<span class="command">./glic</span> decode <span class="file">out.glic</span> <span class="file">result.png</span> <span class="flag">--effect</span> <span class="value">posterize</span> <span class="flag">--effect-levels</span> <span class="value">4</span> <span class="flag">--effect</span> <span class="value">glitch</span></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">GLIC</div>
+                <ul class="footer-links">
+                    <li><a href="https://github.com/daitomanabe/GLIC" target="_blank">GitHub Repository</a></li>
+                    <li><a href="GLIC.pdf">Documentation (PDF)</a></li>
+                    <li><a href="https://docs.google.com/document/d/1cdJvEmSKNAkzkU0dFUa-kb_QJB2ISQg-QfCqpHLFlck/edit" target="_blank">Google Docs</a></li>
+                </ul>
+                <p class="footer-copy">
+                    GLIC - GLitch Image Codec | MIT License
+                </p>
+            </div>
+        </div>
+    </footer>
+</body>
 </html>
