@@ -1,0 +1,3 @@
+[submodule "implementation/glic_cpp"]
+	path = implementation/glic_cpp
+	url = https://github.com/daitomanabe/glic-cpp.git
