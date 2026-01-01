@@ -1,0 +1,68 @@
+[
+{
+  "directory": "/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/build",
+  "command": "/usr/bin/c++  -I\"/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/src\" -I\"/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/external\" -std=gnu++17 -arch arm64 -Wall -Wextra -O2 -o CMakeFiles/glic.dir/src/main.cpp.o -c \"/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/src/main.cpp\"",
+  "file": "/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/src/main.cpp",
+  "output": "CMakeFiles/glic.dir/src/main.cpp.o"
+},
+{
+  "directory": "/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/build",
+  "command": "/usr/bin/c++  -I\"/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/src\" -I\"/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/external\" -std=gnu++17 -arch arm64 -Wall -Wextra -O2 -o CMakeFiles/glic.dir/src/glic.cpp.o -c \"/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/src/glic.cpp\"",
+  "file": "/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/src/glic.cpp",
+  "output": "CMakeFiles/glic.dir/src/glic.cpp.o"
+},
+{
+  "directory": "/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/build",
+  "command": "/usr/bin/c++  -I\"/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/src\" -I\"/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/external\" -std=gnu++17 -arch arm64 -Wall -Wextra -O2 -o CMakeFiles/glic.dir/src/planes.cpp.o -c \"/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/src/planes.cpp\"",
+  "file": "/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/src/planes.cpp",
+  "output": "CMakeFiles/glic.dir/src/planes.cpp.o"
+},
+{
+  "directory": "/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/build",
+  "command": "/usr/bin/c++  -I\"/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/src\" -I\"/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/external\" -std=gnu++17 -arch arm64 -Wall -Wextra -O2 -o CMakeFiles/glic.dir/src/colorspaces.cpp.o -c \"/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/src/colorspaces.cpp\"",
+  "file": "/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/src/colorspaces.cpp",
+  "output": "CMakeFiles/glic.dir/src/colorspaces.cpp.o"
+},
+{
+  "directory": "/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/build",
+  "command": "/usr/bin/c++  -I\"/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/src\" -I\"/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/external\" -std=gnu++17 -arch arm64 -Wall -Wextra -O2 -o CMakeFiles/glic.dir/src/segment.cpp.o -c \"/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/src/segment.cpp\"",
+  "file": "/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/src/segment.cpp",
+  "output": "CMakeFiles/glic.dir/src/segment.cpp.o"
+},
+{
+  "directory": "/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/build",
+  "command": "/usr/bin/c++  -I\"/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/src\" -I\"/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/external\" -std=gnu++17 -arch arm64 -Wall -Wextra -O2 -o CMakeFiles/glic.dir/src/prediction.cpp.o -c \"/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/src/prediction.cpp\"",
+  "file": "/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/src/prediction.cpp",
+  "output": "CMakeFiles/glic.dir/src/prediction.cpp.o"
+},
+{
+  "directory": "/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/build",
+  "command": "/usr/bin/c++  -I\"/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/src\" -I\"/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/external\" -std=gnu++17 -arch arm64 -Wall -Wextra -O2 -o CMakeFiles/glic.dir/src/quantization.cpp.o -c \"/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/src/quantization.cpp\"",
+  "file": "/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/src/quantization.cpp",
+  "output": "CMakeFiles/glic.dir/src/quantization.cpp.o"
+},
+{
+  "directory": "/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/build",
+  "command": "/usr/bin/c++  -I\"/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/src\" -I\"/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/external\" -std=gnu++17 -arch arm64 -Wall -Wextra -O2 -o CMakeFiles/glic.dir/src/wavelet.cpp.o -c \"/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/src/wavelet.cpp\"",
+  "file": "/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/src/wavelet.cpp",
+  "output": "CMakeFiles/glic.dir/src/wavelet.cpp.o"
+},
+{
+  "directory": "/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/build",
+  "command": "/usr/bin/c++  -I\"/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/src\" -I\"/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/external\" -std=gnu++17 -arch arm64 -Wall -Wextra -O2 -o CMakeFiles/glic.dir/src/encoding.cpp.o -c \"/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/src/encoding.cpp\"",
+  "file": "/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/src/encoding.cpp",
+  "output": "CMakeFiles/glic.dir/src/encoding.cpp.o"
+},
+{
+  "directory": "/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/build",
+  "command": "/usr/bin/c++  -I\"/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/src\" -I\"/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/external\" -std=gnu++17 -arch arm64 -Wall -Wextra -O2 -o CMakeFiles/glic.dir/src/bitio.cpp.o -c \"/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/src/bitio.cpp\"",
+  "file": "/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/src/bitio.cpp",
+  "output": "CMakeFiles/glic.dir/src/bitio.cpp.o"
+},
+{
+  "directory": "/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/build",
+  "command": "/usr/bin/c++  -I\"/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/src\" -I\"/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/external\" -std=gnu++17 -arch arm64 -Wall -Wextra -O2 -o CMakeFiles/glic.dir/src/effects.cpp.o -c \"/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/src/effects.cpp\"",
+  "file": "/Users/rhizomacbookproretina30/Rhizomatiks Dropbox/daito manabe/dm_web/sub-domain/daito-vault/GLIC/implementation/glic_cpp/src/effects.cpp",
+  "output": "CMakeFiles/glic.dir/src/effects.cpp.o"
+}
+]
